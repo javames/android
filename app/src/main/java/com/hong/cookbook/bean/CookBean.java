@@ -1,4 +1,4 @@
-package com.hong.cookbook;
+package com.hong.cookbook.bean;
 
 /**
  * Created by Administrator on 2018/2/9.

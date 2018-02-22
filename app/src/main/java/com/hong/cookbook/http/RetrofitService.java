@@ -55,13 +55,13 @@ public class RetrofitService {
     /**
      * 多米玩api
      */
-    private volatile static HttpApi duomiAPI = null;
-    public static HttpApi createDuomiAPI() {
-        if (duomiAPI == null) {
+    private volatile static HttpApi httpApi = null;
+    public  HttpApi createAPI() {
+        if (httpApi == null) {
             synchronized (RetrofitService.class) {
-                if (duomiAPI == null) {
+                if (httpApi == null) {
                     initOkHttpClient();
-                    duomiAPI = new Retrofit.Builder()
+                    httpApi = new Retrofit.Builder()
                             .client(mOkHttpClient)
                             .baseUrl(CommonApi.BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
@@ -70,7 +70,7 @@ public class RetrofitService {
                 }
             }
         }
-        return duomiAPI;
+        return httpApi;
     }
 
     // 配置OkHttpClient
