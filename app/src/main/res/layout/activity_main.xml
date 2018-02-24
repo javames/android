@@ -40,38 +40,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <com.hong.cookbook.widget.RippleView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:layout_marginRight="12dp"
                     android:layout_gravity="right"
+                    android:layout_marginRight="12dp"
+                    android:padding="8dp"
                     app:rv_centered="true"
                     app:rv_color="#ff000000"
-                    app:rv_rippleDuration="200"
-                   >
+                    app:rv_rippleDuration="200">
 
-                <ImageView
-                    android:id="@+id/search_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/search"
-                    android:text="测试"
-                    android:gravity="center"
-                    />
+                    <ImageView
+                        android:id="@+id/search_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:src="@mipmap/search"
+                        android:text="测试" />
                 </com.hong.cookbook.widget.RippleView>
 
             </android.support.v7.widget.Toolbar>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="@color/colorPrimary"
+                android:visibility="gone"
                 app:tabIndicatorColor="@color/colorAccent"
                 app:tabIndicatorHeight="4dp"
                 app:tabSelectedTextColor="#000"
@@ -83,71 +81,85 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nevscroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="16dp"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:drawableTop="@mipmap/weather"
-            android:drawablePadding="2dp"
-            android:layout_weight="1"
-            android:text="天气"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:drawableTop="@mipmap/date"
-            android:drawablePadding="2dp"
-            android:layout_weight="1"
-            android:text="万年历"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:drawableTop="@mipmap/xinzuo"
-            android:drawablePadding="2dp"
-            android:layout_weight="1"
-            android:text="星座运势"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:drawableTop="@mipmap/news"
-            android:drawablePadding="2dp"
-            android:layout_weight="1"
-            android:text="新闻"
-            />
+            <LinearLayout
+                android:id="@+id/title_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="2dp"
+                    android:drawableTop="@mipmap/weather"
+                    android:gravity="center_horizontal"
+                    android:text="天气" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="2dp"
+                    android:drawableTop="@mipmap/date"
+                    android:gravity="center_horizontal"
+                    android:text="万年历" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="2dp"
+                    android:drawableTop="@mipmap/xinzuo"
+                    android:gravity="center_horizontal"
+                    android:text="星座运势" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="2dp"
+                    android:drawableTop="@mipmap/news"
+                    android:gravity="center_horizontal"
+                    android:text="新闻" />
+            </LinearLayout>
+            <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/recycler_list"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:background="#ff0000"-->
+
+            <!--/>-->
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/page"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                />
+
         </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:background="#ff0000"
-
-        />
-    </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="15dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_launcher" />
 </android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/filter_item"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    <com.hong.cookbook.widget.FilterTab
+        android:id="@+id/filter_lab"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_cook"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        />
+
+</LinearLayout>
