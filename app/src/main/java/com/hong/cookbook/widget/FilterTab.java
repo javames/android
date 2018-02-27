@@ -17,14 +17,17 @@ import android.widget.TextView;
  * Created by Administrator on 2018/2/23.
  */
 
-public class FilterTab extends HorizontalScrollView{
+public class FilterTab extends HorizontalScrollView {
 
-    private String [] items;
+    private String[] items;
     private int sTab;
     private Context mCtx;
     private int itemWidth;
-    private int selectedColor=Color.RED;
-    private int unSelectedColor=Color.GRAY;
+    private int selectedColor = Color.RED;
+    private int unSelectedColor = Color.GRAY;
+
+    private int selectPosition = 0;
+
     private LinearLayout parent;
 
     private OnItemClick onItemClick;
@@ -32,28 +35,29 @@ public class FilterTab extends HorizontalScrollView{
     public FilterTab(Context context) {
         this(context, null);
     }
+
     public FilterTab(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mCtx=context;
+        this.mCtx = context;
     }
 
-    public void setData(String [] items){
-        this.items=items;
+    public void setData(String[] items) {
+        this.items = items;
     }
 
-    public void setShowTabCount(int sTab){
-        this.sTab=sTab;
+    public void setShowTabCount(int sTab) {
+        this.sTab = sTab;
     }
 
-    public void setSelectedColor(int selectedColor){
-        this.selectedColor=selectedColor;
+    public void setSelectedColor(int selectedColor) {
+        this.selectedColor = selectedColor;
     }
 
-    public void setUnSelectedColor(int unSelectedColor){
-        this.unSelectedColor=unSelectedColor;
+    public void setUnSelectedColor(int unSelectedColor) {
+        this.unSelectedColor = unSelectedColor;
     }
 
-    public void invalite(){
+    public void invalite() {
 
 
         final ViewTreeObserver viewTreeObserver = this.getViewTreeObserver();
@@ -62,21 +66,30 @@ public class FilterTab extends HorizontalScrollView{
             public void onGlobalLayout() {
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                parent=new LinearLayout(mCtx);
-                int height=getMeasuredHeight();
-                ViewGroup.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,height);
-                parent.setLayoutParams(params);
-                addView(parent);
+                int height = getMeasuredHeight();
 
-                itemWidth=getMeasuredWidth()/sTab;
-                Log.i("test","itemWidth= "+itemWidth+" height= "+height);
-                for (int i = 0; i <items.length ; i++) {
-                    TextView textView=new TextView(mCtx);
+                if (null == parent) {
+                    parent = new LinearLayout(mCtx);
+
+                    ViewGroup.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height);
+                    parent.setLayoutParams(params);
+                    addView(parent);
+                }
+                itemWidth = getMeasuredWidth() / sTab;
+                Log.i("test", "itemWidth= " + itemWidth + " height= " + height);
+                for (int i = 0; i < items.length; i++) {
+                    TextView textView = new TextView(mCtx);
                     textView.setGravity(Gravity.CENTER);
-                    textView.setBackgroundColor(Color.GREEN);
-                    textView.setLayoutParams(new LinearLayout.LayoutParams(itemWidth,height));
+                    textView.setLayoutParams(new LinearLayout.LayoutParams(itemWidth, height));
                     parent.addView(textView);
                     textView.setText(items[i]);
+                    if (i == selectPosition) {
+                        textView.setTextColor(selectedColor);
+                        textView.setTextSize(12);
+                    } else {
+                        textView.setTextColor(unSelectedColor);
+                        textView.setTextSize(11);
+                    }
                     textView.setTag(i);
                     textView.setOnClickListener(clickListener);
                 }
@@ -86,23 +99,27 @@ public class FilterTab extends HorizontalScrollView{
 
     }
 
-    private View.OnClickListener clickListener=new View.OnClickListener(){
+    public void setSelectPostion(int position) {
+        this.selectPosition = position;
+    }
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int childCount = parent.getChildCount();
             for (int i = 0; i < childCount; i++) {
                 TextView child = (TextView) parent.getChildAt(i);
                 child.setTextColor(unSelectedColor);
-                child.setTextSize(14);
+                child.setTextSize(11);
             }
 
             TextView text = (TextView) v;
             text.setTextColor(selectedColor);
-            text.setTextSize(16);
+            text.setTextSize(12);
 
-            int position= (int) v.getTag();
-            if(onItemClick!=null){
-                onItemClick.itemClick(position,v);
+            int position = (int) v.getTag();
+            if (onItemClick != null) {
+                onItemClick.itemClick(position, v);
             }
         }
     };
@@ -110,18 +127,18 @@ public class FilterTab extends HorizontalScrollView{
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-        if (ev.getAction()==MotionEvent.ACTION_DOWN){
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
 
         }
         return super.onTouchEvent(ev);
     }
 
-    public void setOnItemClickListener(OnItemClick onItemClick){
-        this.onItemClick=onItemClick;
+    public void setOnItemClickListener(OnItemClick onItemClick) {
+        this.onItemClick = onItemClick;
     }
 
-    public interface OnItemClick{
-        void itemClick(int position,View view);
+    public interface OnItemClick {
+        void itemClick(int position, View view);
     }
 
 }

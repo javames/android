@@ -12,12 +12,12 @@
     <com.hong.cookbook.widget.FilterTab
         android:id="@+id/filter_lab"
         android:layout_width="match_parent"
-        android:layout_height="48dp"/>
+        android:scrollbars="none"
+        android:layout_height="24dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_cook"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         />

@@ -1,5 +1,6 @@
 package com.hong.cookbook.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -76,7 +77,7 @@ public class CookMenuBean {
             this.list = list;
         }
 
-        public static class ListBean {
+        public static class ListBean implements Serializable{
             /**
              * ctgIds : ["0010001007","0010001020","0010001038","0010001063"]
              * ctgTitles : 荤菜,炖,京菜,养生

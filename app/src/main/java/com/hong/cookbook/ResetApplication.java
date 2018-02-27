@@ -13,6 +13,8 @@ public class ResetApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext=this;
+        GreenDaoManager.getInstance();
+        CrashUtil.getInstance().init(this);
 //        MobSDK.init(this,"234f1eee14d17","37e06cdf17f064d27547a08f16d0cc1d");
 
 //        uploadManager = new UploadManager();

@@ -183,7 +183,7 @@ public class CookBean {
                     this.categoryInfo = categoryInfo;
                 }
 
-                public static class CategoryInfoBeanXX {
+                public static class CategoryInfoBeanXX implements Serializable{
                     /**
                      * ctgId : 0010001007
                      * name : 荤菜
