@@ -13,8 +13,8 @@ object GlideUtil {
 
     fun loadImg(context: Context, imageUrl:String, imageView: ImageView){
         var  requestOptions= RequestOptions()
-        requestOptions.error(R.mipmap.ic_launcher)
-        requestOptions.placeholder(R.mipmap.ic_launcher)
+        requestOptions.error(R.mipmap.def_background)
+        requestOptions.placeholder(R.mipmap.def_background)
         Glide.with(context).load(imageUrl).apply(requestOptions).into(imageView)
     }
     fun loadQiniuImg(context: Context, imageUrl:String, imageView: ImageView){

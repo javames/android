@@ -4,5 +4,111 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/title_bar"
+        layout="@layout/titlebar"
+        />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/dtl_nest"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:layout_weight="1">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/def_background"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:id="@+id/ingredient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/login_title"
+                android:text="原料："
+                android:layout_marginRight="8dp"
+                />
+
+            <TextView
+                android:id="@+id/ingredients_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="14sp"
+                android:text="暂无信息"
+                android:layout_marginRight="8dp"
+                />
+
+            <TextView
+                android:id="@+id/method_lab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/login_title"
+                android:text="做法："
+                android:layout_marginRight="8dp"
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/method_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="18dp"
+
+                />
+
+
+            <TextView
+                android:id="@+id/sumary_lab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/login_title"
+                android:text="点评："
+                android:layout_marginRight="8dp"
+                />
+            <TextView
+                android:id="@+id/sumary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="18dp"
+                android:layout_marginBottom="16dp"
+                android:text="评价"
+                android:layout_marginRight="8dp"
+                />
+        </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
 
 </LinearLayout>

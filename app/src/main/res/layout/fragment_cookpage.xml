@@ -13,7 +13,7 @@
         android:id="@+id/filter_lab"
         android:layout_width="match_parent"
         android:scrollbars="none"
-        android:layout_height="24dp"/>
+        android:layout_height="30dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_cook"
         android:layout_width="match_parent"

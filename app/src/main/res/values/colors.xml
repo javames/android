@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="rippelColor">#FFFFFF</color>
+
+    <color name="background">#eeeeee</color>
+    <color name="white">#FFFFFF</color>
+
+
+    <color name="login_title">#0f0f0f</color>
 </resources>

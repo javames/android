@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.util.Log
 import android.widget.Toast
+import com.hong.cookbook.adapter.PageAdapter
 import com.hong.cookbook.bean.CookBean
 import com.hong.cookbook.event.TopMsg
 import com.hong.cookbook.http.CommonApi
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private var fragmentList =ArrayList<Fragment>()
     private var compositeList: ArrayList<CompositeDisposable>? = null
 
-    private var pageAdapter:PageAdapter?=null
+    private var pageAdapter: PageAdapter?=null
 
     private var viewHeight=0
 
@@ -36,11 +37,14 @@ class MainActivity : AppCompatActivity() {
 
         compositeList = ArrayList()
 
+        GlideUtil.loadImg(this,"http://f2.mob.com/null/2015/08/19/1439945954330.jpg",backdrop)
+
         fab.setOnClickListener {
             EventBus.getDefault().post(TopMsg())
         }
 
         initToolBar()
+
 
         initRecy()
 
@@ -92,6 +96,7 @@ class MainActivity : AppCompatActivity() {
 
             pageAdapter= PageAdapter(supportFragmentManager,fragmentList,items!!)
             page.adapter = pageAdapter
+            page.offscreenPageLimit=childs.size
             tab_layout.setupWithViewPager(page)
         }
     }
@@ -104,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun initToolBar() {
+        toolbar.setTitleTextColor(resources.getColor(R.color.white))
         toolbar.title = "酷可博"
         toolbar.setNavigationIcon(R.mipmap.menu)
         setSupportActionBar(toolbar)
@@ -135,21 +141,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private class PageAdapter(fm: FragmentManager, var fragments:List<Fragment>, var titles:Array<String> ) :FragmentPagerAdapter(fm){
+    override fun onDestroy() {
+        super.onDestroy()
 
-        override fun getItem(position: Int): Fragment {
-            return fragments[position]
-        }
-
-        override fun getCount(): Int {
-            return fragments.size
-        }
-
-        override fun getPageTitle(position: Int): CharSequence {
-            return titles[position]
-        }
+        ResetApplication.getRefWatcher(this).watch(this)
     }
-
 
 
 }

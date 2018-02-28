@@ -142,7 +142,7 @@ public class CookMenuBean {
                 this.ctgIds = ctgIds;
             }
 
-            public static class RecipeBean {
+            public static class RecipeBean implements Serializable{
                 /**
                  * ingredients : ["猪腔骨500g，最好是在超市现买的新鲜腔骨，","白萝卜一整个，大概1000g","超市买的炖肉料两小包,整包是五六块钱；也可以用香叶3片、桂皮5克、丁香3克、肉桂2克、大料10瓣、花椒10克制作成料包","葱30克、姜20克、蒜2头"]
                  * method : [{"step":"1.大葱一根，切成七八厘米的葱段姜蒜若干，切成蒜瓣，姜片"},{"step":"2.腔骨在买时，就让老板给切成一节一节的小块，用冷水放在炖锅里，放入葱段，姜片，炖肉料"},{"step":"3.用小火开始烧,这样可以保证肉嫩"},{"step":"4.炖二十分钟后，将白萝卜块放入锅中一起炖，火可以开到中火，但是小心汤溢出来"},{"step":"5.再四十分钟后，放入适量盐，尝尝肉如果熟了 ，萝卜如果烂了，就可以出锅啦"}]
@@ -154,6 +154,16 @@ public class CookMenuBean {
                 private String method;
                 private String sumary;
                 private String title;
+                private String img;
+
+
+                public String getImg() {
+                    return img;
+                }
+
+                public void setImg(String img) {
+                    this.img = img;
+                }
 
                 public String getIngredients() {
                     return ingredients;

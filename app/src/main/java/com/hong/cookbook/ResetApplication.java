@@ -5,14 +5,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.content.SharedPreferencesCompat;
 
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
+
 public class ResetApplication extends Application {
     private static final String PREF_NAME = "cook.pref";
     private static Context mContext;
 //    private static UploadManager uploadManager;
+    private RefWatcher mRefWatcher;
     @Override
     public void onCreate() {
         super.onCreate();
         mContext=this;
+        mRefWatcher = LeakCanary.install(this);
         GreenDaoManager.getInstance();
         CrashUtil.getInstance().init(this);
 //        MobSDK.init(this,"234f1eee14d17","37e06cdf17f064d27547a08f16d0cc1d");
@@ -20,6 +25,11 @@ public class ResetApplication extends Application {
 //        uploadManager = new UploadManager();
     }
 
+
+    public static RefWatcher getRefWatcher(Context context){
+        ResetApplication baseApplication = (ResetApplication) context.getApplicationContext();
+        return baseApplication.mRefWatcher;
+    }
 
     public static SharedPreferences getPreferences() {
         return getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

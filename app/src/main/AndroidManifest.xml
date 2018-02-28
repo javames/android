@@ -24,6 +24,8 @@
         <activity android:name=".TestActivity">
 
         </activity>
+
+        <activity android:name=".CookDtlActivity"/>
     </application>
 
 </manifest>

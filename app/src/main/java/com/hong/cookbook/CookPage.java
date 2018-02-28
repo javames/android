@@ -1,6 +1,7 @@
 package com.hong.cookbook;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,8 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.hong.cookbook.adapter.GridListAdapter;
 import com.hong.cookbook.bean.CookBean;
 import com.hong.cookbook.bean.CookMenuBean;
 import com.hong.cookbook.bean.Menu;
@@ -53,7 +56,7 @@ public class CookPage extends BaseLazyFragment {
     private static String CTGID = "ctgId";
     private ArrayList<CookBean.ResultBean.ChildsBeanX.ChildsBean> childList;
 
-    private PageAdapter adapter;
+    private GridListAdapter adapter;
 
     private boolean isFirstVisible;
 
@@ -112,6 +115,7 @@ public class CookPage extends BaseLazyFragment {
 
         Log.i("show", ctgId + " // onFragmentFirstVisible() ");
         isFirstVisible = true;
+        Log.i("show", ctgId + " // 网络请求数据 ");
         initRecy(ctgId);
         //
     }
@@ -119,20 +123,23 @@ public class CookPage extends BaseLazyFragment {
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         super.onFragmentVisibleChange(isVisible);
-        Log.i("show", " isFirstVisible: " + isFirstVisible);
+
         if (isVisible) {
+            Log.i("show", " isVisible true ");
+            Log.i("show", " onFragmentVisibleChange: " + isFirstVisible);
             if (!isFirstVisible) {
-                Log.i("show", ctgId + " // onFragmentVisibleChange() ");
                 Log.i("show", " ctgId: " + ctgId);
+                Log.i("show", " 本地数据库获取数据填充 ");
                 List<Menu> menus = menuDaoUtil.queryMenuByMenuId(ctgId);
                 ArrayList<CookMenuBean.ResultBean.ListBean> listBean = JSONUtils.fromJsonList(menus.get(0).getMenuDtl(), CookMenuBean.ResultBean.ListBean.class);
 
+                Log.i("show", " 数据长度： "+listBean.size());
+
                 adapter.setNewData(listBean);
-
-
             }
 
         } else {
+            Log.i("show", " isVisible false ");
             isFirstVisible = false;
         }
 
@@ -182,12 +189,24 @@ public class CookPage extends BaseLazyFragment {
             }
         });
 
-        adapter = new PageAdapter();
+        adapter = new GridListAdapter();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.bindToRecyclerView(recyclerView);
+
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                List data = adapter.getData();
+                CookMenuBean.ResultBean.ListBean listBean  = (CookMenuBean.ResultBean.ListBean) data.get(position);
+                CookMenuBean.ResultBean.ListBean.RecipeBean recipe = listBean.getRecipe();
+                Intent intent=new Intent(mContext,CookDtlActivity.class);
+                intent.putExtra("recipe",recipe);
+                mContext.startActivity(intent);
+            }
+        });
 
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -285,38 +304,6 @@ public class CookPage extends BaseLazyFragment {
                     }
                 });
     }
-
-
-    private class PageAdapter extends BaseQuickAdapter<CookMenuBean.ResultBean.ListBean, BaseViewHolder> {
-
-        public PageAdapter() {
-            super(R.layout.grid_item);
-        }
-
-        @Override
-        protected void convert(BaseViewHolder helper, CookMenuBean.ResultBean.ListBean item) {
-            ImageView imageView = helper.getView(R.id.food_icon);
-            String thumbnail = item.getThumbnail();
-            if (!TextUtils.isEmpty(thumbnail)) {
-                GlideUtil.INSTANCE.loadImg(mContext, thumbnail, imageView);
-            }
-            TextView title = helper.getView(R.id.food_txt);
-            title.setText(item.getName());
-
-            TextView lab = helper.getView(R.id.food_lab);
-            lab.setText(item.getCtgTitles());
-
-            TextView make = helper.getView(R.id.food_make);
-            String ingredients = item.getRecipe().getIngredients();
-            if (!TextUtils.isEmpty(ingredients)) {
-                make.setText(item.getRecipe().getIngredients().replaceAll("[\\[\\]]", ""));
-            } else {
-                make.setText(item.getRecipe().getSumary());
-            }
-
-        }
-    }
-
 
     public void setOnScrollListener(OnScroll onScroll){
         this.onScroll=onScroll;
