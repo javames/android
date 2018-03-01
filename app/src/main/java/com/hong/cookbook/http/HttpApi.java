@@ -14,6 +14,8 @@ import retrofit2.http.Query;
 
 public interface HttpApi {
 
+    public static final String BASE_URL="http://apicloud.mob.com/v1/cook/";
+
     //获取所有的菜系
     @GET("category/query")
     Observable<CookBean> getAllCategorys(@Query("key") String key);

@@ -4,11 +4,11 @@ package com.hong.cookbook.http;
  * Created by Administrator on 2018/2/11.
  */
 
-public class HttpResult<T>{
+public class HttpResult<Object>{
 
     private String retCode;
     private String msg;
-    private  T result;
+    private  Object result;
 
 
     public String getRetCode() {
@@ -27,11 +27,11 @@ public class HttpResult<T>{
         this.msg = msg;
     }
 
-    public T getResult() {
+    public Object getResult() {
         return result;
     }
 
-    public void setResult(T result) {
+    public void setResult(Object result) {
         this.result = result;
     }
 }
