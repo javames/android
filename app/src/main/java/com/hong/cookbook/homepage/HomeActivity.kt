@@ -2,6 +2,7 @@ package com.hong.cookbook.homepage
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.view.KeyEvent
 import android.widget.Toast
 import com.hong.cookbook.CookPage
 
@@ -36,6 +37,8 @@ class HomeActivity : BaseActivity(),HomeContact.View {
     private var viewHeight=0
 
     private var totalScrollRange:Int=0
+    //退出时的时间
+    private var mExitTime: Long = 0L
 
     override fun initPresenter(): BasePresenter<*> {
         return HomePresenter(this,this)
@@ -82,6 +85,7 @@ class HomeActivity : BaseActivity(),HomeContact.View {
 
         search_icon.setOnClickListener {
             toast("点击搜索...")
+            toActivity(this,SearchActivity::class.java)
         }
 
         initToolBar()
@@ -98,7 +102,7 @@ class HomeActivity : BaseActivity(),HomeContact.View {
     }
 
     private fun initData() {
-        GlideUtil.loadImg(this,"http://f2.mob.com/null/2015/08/19/1439945954330.jpg",findView(R.id.backdrop))
+        GlideUtil.loadImg(this,"http://f2.mob.com/null/2015/08/19/1439945954330.jpg",backdrop)
 
         initRecy()
     }
@@ -107,4 +111,22 @@ class HomeActivity : BaseActivity(),HomeContact.View {
         (presenter as HomePresenter).getData()
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.repeatCount === 0) {
+            exit()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun exit() {
+        if (System.currentTimeMillis() - mExitTime > 2000) {
+            Toast.makeText(this@HomeActivity, "再按一次退出！", Toast.LENGTH_SHORT).show()
+            mExitTime = System.currentTimeMillis()
+        } else {
+            finish()
+            System.exit(0)
+        }
+    }
 }

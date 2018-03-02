@@ -77,7 +77,13 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment imp
         if (isFirst) {
             firstLoad();
             isFirst = false;
+        }else{
+            visibleLoad();
         }
+    }
+
+    protected void visibleLoad(){
+
     }
 
     @Override
