@@ -3,6 +3,10 @@ package com.hong.cookbook;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.hong.cookbook.widget.FilterTab;
 
@@ -24,5 +28,16 @@ public class TestActivity extends AppCompatActivity {
         filterTab.setData(items);
         filterTab.setShowTabCount(4);
         filterTab.invalite();
+
+        EditText dd=new EditText(this);
+
+        dd.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Log.i("test","点击按键...");
+                return true;
+            }
+        });
+
     }
 }

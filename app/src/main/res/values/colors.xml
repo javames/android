@@ -10,4 +10,9 @@
 
 
     <color name="login_title">#0f0f0f</color>
+
+    <color name="gray1">#999999</color>
+    <color name="gray2">#666666</color>
+    <color name="gray3">#F4F4F4</color>
+
 </resources>

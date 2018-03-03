@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.KeyEvent
 import android.widget.Toast
-import com.hong.cookbook.CookPage
 
 import com.hong.cookbook.GlideUtil
 import com.hong.cookbook.R
@@ -13,8 +12,6 @@ import com.hong.cookbook.bean.CookBean
 import com.hong.cookbook.event.TopMsg
 import com.hong.cookbook.homepage.contact.HomeContact
 import com.hong.cookbook.homepage.presenter.HomePresenter
-import com.hong.cookbook.http.Api
-import com.hong.cookbook.http.CommonApi
 import com.hong.mvplib.mvpbase.BasePresenter
 import com.hong.mvplib.mvpbase.impl.BaseActivity
 import io.reactivex.disposables.CompositeDisposable

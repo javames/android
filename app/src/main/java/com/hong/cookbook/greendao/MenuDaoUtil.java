@@ -43,7 +43,7 @@ public class MenuDaoUtil {
     public boolean updateMenu(Menu menu){
         boolean flag = false;
         try {
-            mManager.getmDaoSession().update(menu);
+            mManager.getmDaoSession().getMenuDao().update(menu);
             flag = true;
         }catch (Exception e){
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class MenuDaoUtil {
      */
 
     public void QueryAllMenu(){
-        List<Menu> menus = mManager.getmDaoSession().loadAll(Menu.class);
+        List<Menu> menus = mManager.getmDaoSession().getMenuDao().loadAll();
     }
     /**
      * 删除单条记录
@@ -67,7 +67,7 @@ public class MenuDaoUtil {
         boolean flag = false;
         try {
             //按照id删除
-            mManager.getmDaoSession().delete(menu);
+            mManager.getmDaoSession().getMenuDao().delete(menu);
             flag = true;
         }catch (Exception e){
             e.printStackTrace();

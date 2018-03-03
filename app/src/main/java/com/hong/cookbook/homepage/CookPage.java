@@ -1,10 +1,9 @@
-package com.hong.cookbook;
+package com.hong.cookbook.homepage;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,23 +12,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.hong.cookbook.BaseLazyFragment;
+import com.hong.cookbook.CookDtlActivity;
+import com.hong.cookbook.JSONUtils;
+import com.hong.cookbook.OnVerticalScrollListener;
+import com.hong.cookbook.R;
 import com.hong.cookbook.adapter.GridListAdapter;
 import com.hong.cookbook.bean.CookBean;
 import com.hong.cookbook.bean.CookMenuBean;
+import com.hong.cookbook.bean.HistorySelect;
 import com.hong.cookbook.bean.Menu;
 import com.hong.cookbook.event.TopMsg;
+import com.hong.cookbook.greendao.BeanDaoUtil;
 import com.hong.cookbook.greendao.MenuDaoUtil;
 import com.hong.cookbook.http.CommonApi;
-import com.hong.cookbook.http.HttpResult;
 import com.hong.cookbook.http.RetrofitService;
-import com.hong.cookbook.widget.CustomGridItemDecoration;
 import com.hong.cookbook.widget.FilterTab;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,6 +54,7 @@ public class CookPage extends BaseLazyFragment {
     private RecyclerView recyclerView;
     private FilterTab filterTab;
     private static String CTGID = "ctgId";
+    private static String COOKNAME = "name";
     private ArrayList<CookBean.ResultBean.ChildsBeanX.ChildsBean> childList;
 
     private GridListAdapter adapter;
@@ -62,7 +63,9 @@ public class CookPage extends BaseLazyFragment {
 
     private int page = 1;
     private int totalPage = 1;
+
     private String ctgId;
+    private String cookName;
 
     private int size = 20;
 
@@ -80,13 +83,26 @@ public class CookPage extends BaseLazyFragment {
         return cookPage;
     }
 
+    public static CookPage newInstance(String keyName) {
+        CookPage cookPage = new CookPage();
+        Bundle bundle = new Bundle();
+        bundle.putString(COOKNAME, keyName);
+        cookPage.setArguments(bundle);
+        return cookPage;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
         childList = (ArrayList<CookBean.ResultBean.ChildsBeanX.ChildsBean>) arguments.getSerializable(CTGID);
 
-        ctgId = childList.get(0).getCategoryInfo().getCtgId();
+        if (null != childList) {
+            ctgId = childList.get(0).getCategoryInfo().getCtgId();
+        }
+
+
+        cookName = arguments.getString(COOKNAME);
 
     }
 
@@ -116,7 +132,14 @@ public class CookPage extends BaseLazyFragment {
         Log.i("show", ctgId + " // onFragmentFirstVisible() ");
         isFirstVisible = true;
         Log.i("show", ctgId + " // 网络请求数据 ");
-        initRecy(ctgId);
+        if (!TextUtils.isEmpty(ctgId)) {
+            initRecy(null, ctgId);
+        }
+
+        if (!TextUtils.isEmpty(cookName)) {
+            initRecy(cookName, null);
+        }
+
         //
     }
 
@@ -133,7 +156,7 @@ public class CookPage extends BaseLazyFragment {
                 List<Menu> menus = menuDaoUtil.queryMenuByMenuId(ctgId);
                 ArrayList<CookMenuBean.ResultBean.ListBean> listBean = JSONUtils.fromJsonList(menus.get(0).getMenuDtl(), CookMenuBean.ResultBean.ListBean.class);
 
-                Log.i("show", " 数据长度： "+listBean.size());
+                Log.i("show", " 数据长度： " + listBean.size());
 
                 adapter.setNewData(listBean);
             }
@@ -159,7 +182,6 @@ public class CookPage extends BaseLazyFragment {
         }
 
 
-
         return rootView;
     }
 
@@ -167,27 +189,33 @@ public class CookPage extends BaseLazyFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.list_cook);
-
+        //保存刷新的数据到数据库
+        menuDaoUtil = new MenuDaoUtil(mContext);
         filterTab = view.findViewById(R.id.filter_lab);
-        int count = childList.size();
-        String[] items = new String[count];
-        for (int i = 0; i < count; i++) {
-            items[i] = childList.get(i).getCategoryInfo().getNameX();
+        if (!TextUtils.isEmpty(cookName)) {
+            filterTab.setVisibility(View.GONE);
         }
-        filterTab.setData(items);
-        filterTab.setShowTabCount(5);
-        filterTab.invalite();
-        filterTab.setSelectPostion(0);
-
-        filterTab.setOnItemClickListener(new FilterTab.OnItemClick() {
-            @Override
-            public void itemClick(int position, View view) {
-                String ctId = childList.get(position).getCategoryInfo().getCtgId();
-                ctgId=ctId;
-                page=1;
-                initRecy(ctgId);
+        if (null != childList) {
+            int count = childList.size();
+            String[] items = new String[count];
+            for (int i = 0; i < count; i++) {
+                items[i] = childList.get(i).getCategoryInfo().getNameX();
             }
-        });
+            filterTab.setData(items);
+            filterTab.setShowTabCount(5);
+            filterTab.invalite();
+            filterTab.setSelectPostion(0);
+
+            filterTab.setOnItemClickListener(new FilterTab.OnItemClick() {
+                @Override
+                public void itemClick(int position, View view) {
+                    String ctId = childList.get(position).getCategoryInfo().getCtgId();
+                    ctgId = ctId;
+                    page = 1;
+                    initRecy(null, ctgId);
+                }
+            });
+        }
 
         adapter = new GridListAdapter();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
@@ -200,10 +228,10 @@ public class CookPage extends BaseLazyFragment {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 List data = adapter.getData();
-                CookMenuBean.ResultBean.ListBean listBean  = (CookMenuBean.ResultBean.ListBean) data.get(position);
+                CookMenuBean.ResultBean.ListBean listBean = (CookMenuBean.ResultBean.ListBean) data.get(position);
                 CookMenuBean.ResultBean.ListBean.RecipeBean recipe = listBean.getRecipe();
-                Intent intent=new Intent(mContext,CookDtlActivity.class);
-                intent.putExtra("recipe",recipe);
+                Intent intent = new Intent(mContext, CookDtlActivity.class);
+                intent.putExtra("recipe", recipe);
                 mContext.startActivity(intent);
             }
         });
@@ -211,16 +239,16 @@ public class CookPage extends BaseLazyFragment {
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                page+=1;
-                if(page==totalPage){
+                page += 1;
+                if (page == totalPage) {
                     adapter.loadMoreEnd();
-                }else {
-                    initRecy(ctgId);
+                } else {
+                    initRecy(cookName, ctgId);
                 }
             }
-        },recyclerView);
+        }, recyclerView);
 
-        recyclerView.setOnScrollListener(new OnVerticalScrollListener(){
+        recyclerView.setOnScrollListener(new OnVerticalScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -229,8 +257,8 @@ public class CookPage extends BaseLazyFragment {
             @Override
             public void onScrolledUp() {
                 super.onScrolledUp();
-                Log.i("CookPage","onScrolledUp()");
-                if(onScroll!=null){
+                Log.i("CookPage", "onScrolledUp()");
+                if (onScroll != null) {
                     onScroll.onScrolledUp();
                 }
             }
@@ -238,8 +266,8 @@ public class CookPage extends BaseLazyFragment {
             @Override
             public void onScrolledDown() {
                 super.onScrolledDown();
-                Log.i("CookPage","onScrolledDown()");
-                if(onScroll!=null){
+                Log.i("CookPage", "onScrolledDown()");
+                if (onScroll != null) {
                     onScroll.onScrolledDown();
                 }
 
@@ -248,22 +276,22 @@ public class CookPage extends BaseLazyFragment {
             @Override
             public void onScrolledToTop() {
                 super.onScrolledToTop();
-                Log.i("CookPage","onScrolledToTop()");
+                Log.i("CookPage", "onScrolledToTop()");
 
             }
 
             @Override
             public void onScrolledToBottom() {
                 super.onScrolledToBottom();
-                Log.i("CookPage","onScrolledToBottom()");
+                Log.i("CookPage", "onScrolledToBottom()");
 
             }
         });
     }
 
-    private void initRecy(final String cid) {
+    private void initRecy(String name, final String cid) {
         RetrofitService.getInstance().createAPI()
-                .getMenuCooks(page, null, cid, CommonApi.KEY, size)
+                .getMenuCooks(page, name, cid, CommonApi.KEY, size)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<CookMenuBean>() {
@@ -277,23 +305,30 @@ public class CookPage extends BaseLazyFragment {
 
                                 List<CookMenuBean.ResultBean.ListBean> list = resultBean.getList();
 
-                                //保存刷新的数据到数据库
-                                menuDaoUtil = new MenuDaoUtil(mContext);
+
                                 if (page == 1) {
-                                    List<Menu> menus = menuDaoUtil.queryMenuByMenuId(cid);
-                                    if (menus == null || (menus != null && menus.size() == 0)) {
-                                        menuDaoUtil.insertMenu(new Menu(null, cid, JSONUtils.GsonString(list)));
-                                    } else {
-                                        menuDaoUtil.updateMenu(new Menu(menus.get(0).getId(), cid, JSONUtils.GsonString(list)));
+                                    if (!TextUtils.isEmpty(cid)) {
+                                        List<Menu> menus = menuDaoUtil.queryMenuByMenuId(cid);
+                                        if (menus == null || (menus != null && menus.size() == 0)) {
+                                            menuDaoUtil.insertMenu(new Menu(null, cid, JSONUtils.GsonString(list)));
+                                        } else {
+                                            menuDaoUtil.updateMenu(new Menu(menus.get(0).getId(), cid, JSONUtils.GsonString(list)));
+                                        }
                                     }
                                     adapter.setNewData(list);
                                     recyclerView.smoothScrollToPosition(0);
-                                }else{
+                                } else {
                                     adapter.addData(list);
                                     adapter.loadMoreComplete();
                                 }
                             }
 
+                            if(!TextUtils.isEmpty(cookName)){
+                                HistorySelect historySelect = new HistorySelect();
+                                historySelect.setId(null);
+                                historySelect.setKey(cookName);
+                                BeanDaoUtil.getInstance().insertBean(historySelect);
+                            }
 
                         }
                     }
@@ -305,28 +340,31 @@ public class CookPage extends BaseLazyFragment {
                 });
     }
 
-    public void setOnScrollListener(OnScroll onScroll){
-        this.onScroll=onScroll;
+    public void setOnScrollListener(OnScroll onScroll) {
+        this.onScroll = onScroll;
     }
-    public interface OnScroll{
+
+    public interface OnScroll {
 
         void onScrolledDown();
+
         void onScrolledUp();
 
         void onScrolledToTop();
+
         void onScrolledToBottom();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.i("CookPage","onStart()");
+        Log.i("CookPage", "onStart()");
         EventBus.getDefault().register(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(TopMsg event) {
-        if(recyclerView!=null){
+        if (recyclerView != null) {
             recyclerView.smoothScrollToPosition(0);
         }
     }
@@ -334,7 +372,7 @@ public class CookPage extends BaseLazyFragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("CookPage","onStop()");
+        Log.i("CookPage", "onStop()");
         EventBus.getDefault().unregister(this);
     }
 }

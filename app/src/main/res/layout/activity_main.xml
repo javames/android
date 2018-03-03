@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.hong.cookbook.MainActivity">
+    tools:context="com.hong.cookbook.homepage.HomeActivity">
 
 
     <android.support.design.widget.AppBarLayout
@@ -44,24 +44,15 @@
                 app:titleTextColor="#ffffff"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-                <com.hong.cookbook.widget.RippleView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="12dp"
-                    android:padding="8dp"
-                    app:rv_centered="true"
-                    app:rv_color="#ff000000"
-                    app:rv_rippleDuration="200">
-
                     <ImageView
                         android:id="@+id/search_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
                         android:gravity="center"
                         android:src="@mipmap/search"
                         android:text="测试" />
-                </com.hong.cookbook.widget.RippleView>
 
             </android.support.v7.widget.Toolbar>
 

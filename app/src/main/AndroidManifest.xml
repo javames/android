@@ -27,7 +27,9 @@
 
         <activity android:name=".CookDtlActivity"/>
 
-        <activity android:name=".homepage.SearchActivity"/>
+        <activity android:name=".homepage.SearchActivity" android:windowSoftInputMode="stateVisible|adjustResize"/>
+
+        <activity android:name=".homepage.CookMenuActivity"/>
     </application>
 
 </manifest>
