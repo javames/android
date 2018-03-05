@@ -1,5 +1,7 @@
 package com.hong.cookbook.bean;
 
+import com.hong.cookbook.greendao.BaseBean;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -9,7 +11,7 @@ import org.greenrobot.greendao.annotation.Id;
  */
 
 @Entity
-public class HistorySelect {
+public class HistorySelect extends BaseBean{
 
     @Id(autoincrement = true)
     private Long id;

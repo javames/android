@@ -12,10 +12,10 @@ import kotlinx.android.synthetic.main.activity_cookmenu.*
 /**
  * Created by Administrator on 2018/3/3.
  */
-class CookMenuActivity:BaseActivity(),CookMenuContact.View {
+class CookMenuActivity:BaseActivity<CookMenuPresenter>(),CookMenuContact.View {
 
 
-    override fun initPresenter(): BasePresenter<*> {
+    override fun initPresenter(): CookMenuPresenter{
         return CookMenuPresenter(this,this)
     }
 
@@ -25,9 +25,8 @@ class CookMenuActivity:BaseActivity(),CookMenuContact.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cookmenu)
-        var name=dataBundle.get("name")
 
+        var name=dataBundle.get("name")
         var fragment=CookPage.newInstance(name.toString())
         var activ=fragment.activity
         if(null!=activ){
@@ -36,7 +35,6 @@ class CookMenuActivity:BaseActivity(),CookMenuContact.View {
             beginTransaction.remove(fragment)
             beginTransaction.commit()
         }
-
 
         val manager = supportFragmentManager
         val transaction = manager.beginTransaction()
@@ -47,5 +45,9 @@ class CookMenuActivity:BaseActivity(),CookMenuContact.View {
         back_fab.setOnClickListener {
             finish()
         }
+    }
+
+    override fun setLayoutResId() {
+        layoutResId=R.layout.activity_cookmenu
     }
 }

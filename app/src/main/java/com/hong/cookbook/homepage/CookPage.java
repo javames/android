@@ -25,8 +25,9 @@ import com.hong.cookbook.bean.CookBean;
 import com.hong.cookbook.bean.CookMenuBean;
 import com.hong.cookbook.bean.HistorySelect;
 import com.hong.cookbook.bean.Menu;
+import com.hong.cookbook.event.RefreshEvent;
 import com.hong.cookbook.event.TopMsg;
-import com.hong.cookbook.greendao.BeanDaoUtil;
+import com.hong.cookbook.greendao.HistorySelectDaoUtil;
 import com.hong.cookbook.greendao.MenuDaoUtil;
 import com.hong.cookbook.http.CommonApi;
 import com.hong.cookbook.http.RetrofitService;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -75,6 +77,10 @@ public class CookPage extends BaseLazyFragment {
 
     private OnScroll onScroll;
 
+    private ILoadProgress iLoadProgress;
+
+    private Disposable subscribe;
+
     public static CookPage newInstance(List<CookBean.ResultBean.ChildsBeanX.ChildsBean> cookId) {
         CookPage cookPage = new CookPage();
         Bundle bundle = new Bundle();
@@ -103,20 +109,13 @@ public class CookPage extends BaseLazyFragment {
 
 
         cookName = arguments.getString(COOKNAME);
-
+        Log.i("test","onCreate()");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        Log.i("show", ctgId + " // onDestroyView() ");
     }
 
     @Override
@@ -180,8 +179,6 @@ public class CookPage extends BaseLazyFragment {
         if (parent != null) {
             parent.removeView(rootView);
         }
-
-
         return rootView;
     }
 
@@ -224,6 +221,8 @@ public class CookPage extends BaseLazyFragment {
         recyclerView.setAdapter(adapter);
         adapter.bindToRecyclerView(recyclerView);
 
+
+
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -240,7 +239,7 @@ public class CookPage extends BaseLazyFragment {
             @Override
             public void onLoadMoreRequested() {
                 page += 1;
-                if (page == totalPage) {
+                if (page >totalPage) {
                     adapter.loadMoreEnd();
                 } else {
                     initRecy(cookName, ctgId);
@@ -290,13 +289,16 @@ public class CookPage extends BaseLazyFragment {
     }
 
     private void initRecy(String name, final String cid) {
-        RetrofitService.getInstance().createAPI()
+        showLoad();
+        subscribe = RetrofitService.getInstance().createAPI()
                 .getMenuCooks(page, name, cid, CommonApi.KEY, size)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<CookMenuBean>() {
                     @Override
                     public void accept(CookMenuBean cookBeanHttpResult) throws Exception {
+                        dismissLoad();
+
                         String msg = cookBeanHttpResult.getMsg();
                         if ("success".equals(msg)) {
                             CookMenuBean.ResultBean resultBean = cookBeanHttpResult.getResult();
@@ -314,6 +316,7 @@ public class CookPage extends BaseLazyFragment {
                                         } else {
                                             menuDaoUtil.updateMenu(new Menu(menus.get(0).getId(), cid, JSONUtils.GsonString(list)));
                                         }
+
                                     }
                                     adapter.setNewData(list);
                                     recyclerView.smoothScrollToPosition(0);
@@ -323,18 +326,25 @@ public class CookPage extends BaseLazyFragment {
                                 }
                             }
 
-                            if(!TextUtils.isEmpty(cookName)){
+                            if (!TextUtils.isEmpty(cookName)) {
                                 HistorySelect historySelect = new HistorySelect();
                                 historySelect.setId(null);
                                 historySelect.setKey(cookName);
-                                BeanDaoUtil.getInstance().insertBean(historySelect);
+                                List<HistorySelect> historyList = HistorySelectDaoUtil.getInstance().queryHistorySelectByKey(cookName);
+                                if (historyList == null || (historyList != null && historyList.size() == 0)) {
+                                    HistorySelectDaoUtil.getInstance().insertBean(historySelect);
+                                    EventBus.getDefault().post(new RefreshEvent());
+                                }
                             }
-
+                        }else{
+                            adapter.setEmptyView(R.layout.nodata_layout);
                         }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        dismissLoad();
+                        adapter.setEmptyView(R.layout.nodata_layout);
                         Toast.makeText(context, "网络请求出现错误！", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -355,10 +365,31 @@ public class CookPage extends BaseLazyFragment {
         void onScrolledToBottom();
     }
 
+    public void setLoadPregressListener(ILoadProgress iLoadProgress){
+        this.iLoadProgress=iLoadProgress;
+    }
+
+    private void showLoad() {
+        if (null != iLoadProgress) {
+            iLoadProgress.onShow();
+        }
+    }
+
+
+    private void dismissLoad(){
+        if (null != iLoadProgress) {
+            iLoadProgress.onHide();
+        }
+    }
+
+    public interface ILoadProgress{
+        void onShow();
+        void onHide();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        Log.i("CookPage", "onStart()");
         EventBus.getDefault().register(this);
     }
 
@@ -369,10 +400,21 @@ public class CookPage extends BaseLazyFragment {
         }
     }
 
+
+
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("CookPage", "onStop()");
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        recyclerView=null;
+        adapter=null;
+        subscribe.dispose();
+        subscribe=null;
+
     }
 }

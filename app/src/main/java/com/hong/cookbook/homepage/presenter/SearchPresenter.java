@@ -9,6 +9,7 @@ import com.hong.cookbook.bean.HistorySelect;
 import com.hong.cookbook.bean.HotSelect;
 import com.hong.cookbook.bean.Menu;
 import com.hong.cookbook.greendao.BeanDaoUtil;
+import com.hong.cookbook.greendao.HistorySelectDaoUtil;
 import com.hong.cookbook.greendao.MenuDaoUtil;
 import com.hong.cookbook.homepage.contact.HomeContact;
 import com.hong.cookbook.homepage.contact.SearchContact;
@@ -38,7 +39,7 @@ public class SearchPresenter extends BasePresenterImpl<SearchContact.View> imple
 
     @Override
     public void getData() {
-        ArrayList<HistorySelect> historyList = BeanDaoUtil.getInstance().QueryAllBean(HistorySelect.class);
+        ArrayList<HistorySelect> historyList = HistorySelectDaoUtil.getInstance().QueryAllBean();
         ArrayList<HotSelect> hotList = BeanDaoUtil.getInstance().QueryAllBean(HotSelect.class);
         view.setData(historyList,hotList);
     }

@@ -3,6 +3,7 @@ package com.hong.cookbook.homepage
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.KeyEvent
+import android.view.View
 import android.widget.Toast
 
 import com.hong.cookbook.GlideUtil
@@ -23,7 +24,7 @@ import java.util.ArrayList
  * Created by Administrator on 2018/3/1.
  */
 
-class HomeActivity : BaseActivity(),HomeContact.View {
+class HomeActivity : BaseActivity<HomePresenter>(),HomeContact.View, CookPage.ILoadProgress {
 
     private var isQuit = false
     private var fragmentList = ArrayList<Fragment>()
@@ -37,18 +38,13 @@ class HomeActivity : BaseActivity(),HomeContact.View {
     //退出时的时间
     private var mExitTime: Long = 0L
 
-    override fun initPresenter(): BasePresenter<*> {
+    override fun initPresenter(): HomePresenter{
         return HomePresenter(this,this)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        presenter.attachView(this)
-        initView()
-        initData()
+    override fun setLayoutResId() {
+        layoutResId=R.layout.activity_main
     }
-
 
     override fun setData(childs: List<CookBean.ResultBean.ChildsBeanX>?) {
         if(null!=childs){
@@ -65,6 +61,7 @@ class HomeActivity : BaseActivity(),HomeContact.View {
         for(j in 0..(childs.size-1)){
             tab_layout.addTab(tab_layout.newTab().setText(items[j]))
             var cookPage= CookPage.newInstance(childs[j].childs)
+            cookPage.setLoadPregressListener(this)
             fragmentList.add(cookPage)
         }
 
@@ -75,7 +72,8 @@ class HomeActivity : BaseActivity(),HomeContact.View {
        }
     }
 
-    private fun initView(){
+    override fun initView(){
+
         fab.setOnClickListener {
             EventBus.getDefault().post(TopMsg())
         }
@@ -98,7 +96,20 @@ class HomeActivity : BaseActivity(),HomeContact.View {
 
     }
 
-    private fun initData() {
+    override fun onShow() {
+        progressBar.visibility=View.VISIBLE
+    }
+
+    override fun onHide() {
+        progressBar.postDelayed(Runnable {
+            progressBar.visibility=View.GONE
+        },200)
+
+    }
+
+    override fun initData() {
+        presenter.attachView(this)
+
         GlideUtil.loadImg(this,"http://f2.mob.com/null/2015/08/19/1439945954330.jpg",backdrop)
 
         initRecy()

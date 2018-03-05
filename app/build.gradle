@@ -23,7 +23,7 @@ android {
     }
 
     greendao {
-        schemaVersion 1
+        schemaVersion 2
         daoPackage 'com.hong.cookbook.gen'
         targetGenDir 'src/main/java'
     }
@@ -49,8 +49,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
-
-
     /*squareup library*/
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
@@ -59,17 +57,14 @@ dependencies {
     /*rx library*/
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.6'
-
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-
-
     implementation 'com.github.bumptech.glide:glide:4.3.0'
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'org.greenrobot:eventbus:3.1.1'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-
-    compile(name: 'mvpLib-1.0', ext: 'aar')
+    //    compile(name: 'mvpLib-1.0', ext: 'aar')
+    implementation project(':mvpLib')
 }

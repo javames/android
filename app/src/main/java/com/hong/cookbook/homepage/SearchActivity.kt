@@ -29,42 +29,87 @@ import com.hong.cookbook.DensityUtil
 import com.hong.cookbook.SoftInputUtil
 import com.hong.cookbook.bean.HistorySelect
 import com.hong.cookbook.bean.HotSelect
+import com.hong.cookbook.event.RefreshEvent
+import com.hong.cookbook.greendao.HistorySelectDaoUtil
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.ArrayList
 
 
 /**
- * Created by Administrator on 2018/3/2.
+ * Created by Administrator on 2018/3/2
  */
-class SearchActivity:BaseActivity() ,SearchContact.View{
+class SearchActivity:BaseActivity<SearchPresenter>() ,SearchContact.View{
 
-    override fun initPresenter(): BasePresenter<*> {
+    override fun initPresenter(): SearchPresenter{
         return SearchPresenter(this,this)
     }
 
     override fun setData(historyList: ArrayList<HistorySelect>?, hotList: ArrayList<HotSelect>?) {
 
+        history_flowlayout.removeAllViews()
+        hot_flowlayout.removeAllViews()
+
         if(historyList!=null&&historyList.size>0){
             for(i in 0..(historyList!!.size-1)){
+                if(i>12){
+                    return
+                }
                 val item = getItem()
                 item.text=historyList[i].key
+                item.tag = item.text.toString()
+                item.setOnClickListener(viewClick)
                 history_flowlayout.addView(item)
+
             }
         }
 
+
         if(hotList!=null&&hotList.size>0){
+
             for(i in 0..(hotList!!.size-1)){
+                if(i>12){
+                    return
+                }
                 val item = getItem()
                 item.text=hotList[i].key
+                item.tag = item.text.toString()
+                item.setOnClickListener(viewClick)
+                hot_flowlayout.addView(item)
+            }
+        }else{
+            var hotList=listOf(HotSelect(null,"红烧肉"), HotSelect(null,"花粥食谱"), HotSelect(null,"花粥食谱"), HotSelect(null,"番茄牛腩饭"), HotSelect(null,"地瓜糕"))
+
+            for(i in 0..(hotList!!.size-1)){
+                if(i>12){
+                    return
+                }
+                val item = getItem()
+                item.text=hotList[i].key
+                item.tag = item.text.toString()
+                item.setOnClickListener(viewClick)
                 hot_flowlayout.addView(item)
             }
         }
 
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
-        initView()
+    private var viewClick=View.OnClickListener {
+        var key=it.tag.toString()
+        toCookMenuActivity(key)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshThread(event: RefreshEvent) {
+        presenter.getData()
+    }
+    override fun setLayoutResId() {
+        layoutResId=R.layout.activity_search
+    }
+
+    override fun initData(){
+        presenter.getData()
     }
 
     override fun respMenuCooks(cookId: MutableList<CookBean.ResultBean.ChildsBeanX>?) {
@@ -90,8 +135,8 @@ class SearchActivity:BaseActivity() ,SearchContact.View{
         bundle.putString("name",name)
         toActivity(this@SearchActivity,bundle,CookMenuActivity::class.java)
     }
-    private fun initView(){
-
+    override fun initView(){
+        EventBus.getDefault().register(this)
         search_btn.setOnClickListener {
             toCookMenuActivity(edit_txt.text.toString().trim())
         }
@@ -133,5 +178,15 @@ class SearchActivity:BaseActivity() ,SearchContact.View{
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
+
+        recycle_record.setOnClickListener {
+            HistorySelectDaoUtil.getInstance().deleteAll()
+            presenter.getData()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 }
