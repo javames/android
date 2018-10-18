@@ -110,7 +110,7 @@ class HomeActivity : BaseActivity<HomePresenter>(),HomeContact.View, CookPage.IL
     override fun initData() {
         presenter.attachView(this)
 
-        GlideUtil.loadImg(this,"http://f2.mob.com/null/2015/08/19/1439945954330.jpg",backdrop)
+//        GlideUtil.loadImg(this,"http://f2.mob.com/null/2015/08/19/1439945954330.jpg",backdrop)
 
         initRecy()
     }

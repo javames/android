@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">cookbook</string>
+
+    <string name="weather">天气</string>
+    <string name="wandate">万年历</string>
+    <string name="xinzuo">星座运势</string>
+    <string name="news">新闻</string>
 </resources>
